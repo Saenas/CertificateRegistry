@@ -21,15 +21,19 @@ contract Registry is Ownable {
 	mapping (string => FileDetails) removedFiles;
 
 	function registerFile(string memory fileHash) public onlyOwner {
-		registeredFiles[fileHash].timestamp = now;
-		registeredFiles[fileHash].blockNumber = block.number;
-		emit FileRegistered(fileHash);
+		if (registeredFiles[fileHash].blockNumber == 0) {
+			registeredFiles[fileHash].timestamp = now;
+			registeredFiles[fileHash].blockNumber = block.number;
+			emit FileRegistered(fileHash);
+		}
 	}
 
 	function removeFile(string memory fileHash) public onlyOwner {
-		removedFiles[fileHash].timestamp = now;
-		removedFiles[fileHash].blockNumber = block.number;
-		emit FileRemoved(fileHash);
+		if (removedFiles[fileHash].blockNumber == 0) {
+			removedFiles[fileHash].timestamp = now;
+			removedFiles[fileHash].blockNumber = block.number;
+			emit FileRemoved(fileHash);
+		}
 	}
 
 	function isRegistered(string memory fileHash) public view returns(bool, uint, uint) {
