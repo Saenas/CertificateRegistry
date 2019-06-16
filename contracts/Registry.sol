@@ -9,18 +9,18 @@ contract Registry is Ownable {
 		name = _name;
 	}	
 
-	event FileRegistered(string indexed registered);
-	event FileRemoved(string indexed removed);
+	event FileRegistered(bytes32 indexed registered);
+	event FileRemoved(bytes32 indexed removed);
 
 	struct FileDetails {
 		uint timestamp;
 		uint blockNumber;
 	}
 
-	mapping (string => FileDetails) registeredFiles;
-	mapping (string => FileDetails) removedFiles;
+	mapping (bytes32 => FileDetails) registeredFiles;
+	mapping (bytes32 => FileDetails) removedFiles;
 
-	function registerFile(string memory fileHash) public onlyOwner {
+	function registerFile(bytes32 fileHash) public onlyOwner {
 		if (registeredFiles[fileHash].blockNumber == 0) {
 			registeredFiles[fileHash].timestamp = now;
 			registeredFiles[fileHash].blockNumber = block.number;
@@ -28,7 +28,7 @@ contract Registry is Ownable {
 		}
 	}
 
-	function removeFile(string memory fileHash) public onlyOwner {
+	function removeFile(bytes32 fileHash) public onlyOwner {
 		if (removedFiles[fileHash].blockNumber == 0) {
 			removedFiles[fileHash].timestamp = now;
 			removedFiles[fileHash].blockNumber = block.number;
@@ -36,21 +36,21 @@ contract Registry is Ownable {
 		}
 	}
 
-	function isRegistered(string memory fileHash) public view returns(bool, uint, uint) {
+	function isRegistered(bytes32 fileHash) public view returns(bool, uint, uint) {
 		if (registeredFiles[fileHash].blockNumber != 0) {
 			return (true, registeredFiles[fileHash].timestamp, registeredFiles[fileHash].blockNumber);
 		}
 		return (false, 0, 0);
 	}
 
-	function isRemoved(string memory fileHash) public view returns(bool, uint, uint){
+	function isRemoved(bytes32 fileHash) public view returns(bool, uint, uint){
 		if (removedFiles[fileHash].blockNumber != 0) {
 			return (true, removedFiles[fileHash].timestamp, removedFiles[fileHash].blockNumber);
 		}
 		return (false, 0, 0);
 	}
 
-	function isValid(string memory fileHash) public view returns(bool) {
+	function isValid(bytes32 fileHash) public view returns(bool) {
 		return (registeredFiles[fileHash].blockNumber < removedFiles[fileHash].blockNumber);
 	}
 }
